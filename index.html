@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ЗАМЕНИ ЗДЕСЬ: название вкладки браузера -->
+  <title>Ларисе уже 19!</title>
+
+  <!-- Красивые шрифты из интернета -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       1. ЦВЕТА — меняй здесь, весь сайт перекрасится
+       ============================================ */
+    :root{
+      --accent:  #c2547e;   /* основной розовый (кнопки, акценты) */
+      --ink:     #4a3550;   /* цвет текста */
+      --paper:   rgba(255,255,255,.75); /* фон карточек */
+    }
+
+    /* ============================================
+       2. БАЗА
+       ============================================ */
+    *{ margin:0; padding:0; box-sizing:border-box; }
+
+    body{
+      font-family:'Montserrat', Arial, sans-serif;
+      color:var(--ink);
+      line-height:1.65;
+      min-height:100vh;
+      overflow-x:hidden;
+      background:linear-gradient(165deg,#fdf2f8 0%,#fce7f3 25%,#f3e8ff 60%,#e0e7ff 100%);
+      background-attachment:fixed;
+    }
+
+    .container{ max-width:780px; margin:0 auto; padding:0 24px; }
+
+    /* ============================================
+       3. ГЛАВНЫЙ ЭКРАН
+       ============================================ */
+    .hero{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding:60px 24px;
+      position:relative;
+      z-index:2;
+    }
+
+    .eyebrow{
+      text-transform:uppercase;
+      letter-spacing:.35em;
+      font-size:12px;
+      font-weight:600;
+      color:var(--accent);
+      margin-bottom:24px;
+      opacity:0;
+      animation:rise 1s .2s forwards;
+    }
+
+    .hero h1{
+      font-family:'Playfair Display', Georgia, serif;
+      font-weight:500;
+      font-size:clamp(34px, 8vw, 68px);
+      line-height:1.1;
+      margin-bottom:12px;
+      opacity:0;
+      animation:rise 1s .45s forwards;
+    }
+
+    .hero-name{
+      font-family:'Playfair Display', Georgia, serif;
+      font-style:italic;
+      font-size:clamp(44px, 12vw, 96px);
+      color:var(--accent);
+      line-height:1.1;
+      margin-bottom:28px;
+      opacity:0;
+      animation:rise 1s .7s forwards;
+    }
+
+    .hero-age{
+      font-size:16px;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+      color:var(--ink);
+      opacity:.75;
+      margin-bottom:28px;
+      opacity:0;
+      animation:rise 1s .85s forwards;
+    }
+
+    .hero-date{
+      display:inline-flex;
+      align-items:center;
+      gap:18px;
+      padding:16px 30px;
+      border-radius:999px;
+      background:var(--paper);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.9);
+      box-shadow:0 12px 40px rgba(180,120,160,.18);
+      font-size:15px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:500;
+      opacity:0;
+      animation:rise 1s 1s forwards;
+    }
+
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(28px); }
+      to  { opacity:1; transform:translateY(0); }
+    }
+
+    .scroll-hint{
+      position:absolute;
+      bottom:32px;
+      font-size:13px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:var(--accent);
+      text-decoration:none;
+      animation:bounce 2.4s infinite;
+      opacity:0;
+      animation:rise 1s 1.3s forwards, bounce 2.4s 2.3s infinite;
+    }
+    @keyframes bounce{
+      0%,100%{ transform:translateY(0); }
+      50%    { transform:translateY(8px); }
+    }
+
+    /* ============================================
+       4. ОБЩИЕ СЕКЦИИ
+       ============================================ */
+    .section{
+      padding:70px 0;
+      position:relative;
+      z-index:2;
+    }
+
+    .section-title{
+      font-family:'Playfair Display', Georgia, serif;
+      font-weight:500;
+      font-size:clamp(26px, 5vw, 40px);
+      text-align:center;
+      margin-bottom:40px;
+    }
+
+    .section-title::after{
+      content:"";
+      display:block;
+      width:56px;
+      height:2px;
+      background:var(--accent);
+      margin:16px auto 0;
+      opacity:.6;
+    }
+
+    /* появление при прокрутке */
+    .reveal{ opacity:0; transform:translateY(36px); transition:opacity .9s ease, transform .9s ease; }
+    .reveal.visible{ opacity:1; transform:none; }
+
+    /* ============================================
+       5. ТАЙМЕР
+       ============================================ */
+    .countdown{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .time-box{
+      background:var(--paper);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:20px;
+      box-shadow:0 10px 30px rgba(180,120,160,.15);
+      padding:20px 6px;
+      width:88px;
+      text-align:center;
+    }
+
+    .time-box span{
+      display:block;
+      font-family:'Playfair Display', Georgia, serif;
+      font-size:34px;
+      line-height:1;
+      color:var(--accent);
+    }
+
+    .time-box small{
+      display:block;
+      margin-top:8px;
+      font-size:10px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      opacity:.65;
+    }
+
+    /* ============================================
+       6. КАРТОЧКИ С ДЕТАЛЯМИ
+       ============================================ */
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:20px;
+    }
+
+    .card{
+      background:var(--paper);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:24px;
+      box-shadow:0 10px 34px rgba(180,120,160,.14);
+      padding:32px 26px;
+      text-align:center;
+      transition:transform .3s ease, box-shadow .3s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 18px 44px rgba(180,120,160,.22);
+    }
+
+    .card-icon{ font-size:32px; margin-bottom:14px; }
+
+    .card h3{
+      font-family:'Playfair Display', Georgia, serif;
+      font-weight:500;
+      font-size:20px;
+      margin-bottom:10px;
+    }
+
+    .card p{ font-size:15px; opacity:.85; }
+
+    .link{
+      display:inline-block;
+      margin-top:12px;
+      font-size:13px;
+      color:var(--accent);
+      text-decoration:none;
+      border-bottom:1px solid currentColor;
+      padding-bottom:2px;
+    }
+
+    /* ============================================
+       7. ПРОГРАММА ВЕЧЕРА
+       ============================================ */
+    .timeline{ max-width:420px; margin:0 auto; }
+
+    .timeline-item{
+      display:flex;
+      align-items:baseline;
+      gap:20px;
+      padding:14px 0;
+      border-bottom:1px dashed rgba(74,53,80,.18);
+    }
+    .timeline-item:last-child{ border-bottom:none; }
+
+    .timeline-time{
+      font-family:'Playfair Display', Georgia, serif;
+      font-size:20px;
+      color:var(--accent);
+      min-width:64px;
+    }
+
+    /* ============================================
+       8. КНОПКИ «БУДУ / НЕ СМОГУ»
+       ============================================ */
+    .rsvp{ text-align:center; }
+
+    .rsvp p{
+      max-width:480px;
+      margin:0 auto 36px;
+      opacity:.85;
+      font-size:16px;
+    }
+
+    .buttons{
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:17px 38px;
+      border-radius:999px;
+      background:var(--accent);
+      color:#fff;
+      text-decoration:none;
+      font-weight:500;
+      font-size:15px;
+      letter-spacing:.04em;
+      box-shadow:0 10px 26px rgba(194,84,126,.35);
+      transition:transform .25s ease, box-shadow .25s ease;
+    }
+
+    .btn:hover{
+      transform:translateY(-4px);
+      box-shadow:0 16px 34px rgba(194,84,126,.45);
+    }
+
+    .btn.secondary{
+      background:rgba(255,255,255,.85);
+      color:var(--accent);
+      border:1px solid var(--accent);
+      box-shadow:0 10px 26px rgba(180,120,160,.15);
+    }
+
+    /* ============================================
+       9. ПОДВАЛ
+       ============================================ */
+    footer{
+      text-align:center;
+      padding:50px 24px 70px;
+      font-family:'Playfair Display', Georgia, serif;
+      font-style:italic;
+      font-size:18px;
+      color:var(--accent);
+      position:relative;
+      z-index:2;
+    }
+
+    /* ============================================
+       10. ЛЕТАЮЩИЕ УКРАШЕНИЯ
+       ============================================ */
+    .floating{
+      position:fixed;
+      bottom:-70px;
+      font-size:26px;
+      pointer-events:none;
+      z-index:1;
+      animation:floatUp linear infinite;
+      opacity:0;
+    }
+
+    @keyframes floatUp{
+      0%  { transform:translateY(0) rotate(0deg);      opacity:0; }
+      10% { opacity:.55; }
+      85% { opacity:.55; }
+      100%{ transform:translateY(-115vh) rotate(320deg); opacity:0; }
+    }
+
+    /* ============================================
+       11. ТЕЛЕФОНЫ
+       ============================================ */
+    @media (max-width:520px){
+      .section{ padding:52px 0; }
+      .time-box{ width:72px; padding:16px 4px; }
+      .time-box span{ font-size:26px; }
+      .btn{ padding:15px 28px; width:100%; }
+      .hero-date{ font-size:12px; letter-spacing:.08em; padding:14px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============ ЛЕТАЮЩИЕ УКРАШЕНИЯ ============
+       Хочешь другие — поменяй эмодзи или убери строки -->
+  <div class="floating" style="left:4%;  animation-duration:20s; animation-delay:0s;">🌸</div>
+  <div class="floating" style="left:18%; animation-duration:26s; animation-delay:4s;">✨</div>
+  <div class="floating" style="left:34%; animation-duration:22s; animation-delay:9s;">🎈</div>
+  <div class="floating" style="left:52%; animation-duration:28s; animation-delay:2s;">🌷</div>
+  <div class="floating" style="left:68%; animation-duration:23s; animation-delay:12s;">💫</div>
+  <div class="floating" style="left:82%; animation-duration:27s; animation-delay:6s;">🎀</div>
+  <div class="floating" style="left:92%; animation-duration:21s; animation-delay:15s;">🌼</div>
+
+  <!-- ============ ГЛАВНЫЙ ЭКРАН ============ -->
+  <header class="hero">
+    <p class="eyebrow">Приглашаю на</p>
+
+    <h1>Мой день<br>рождения</h1>
+
+    <!-- ЗАМЕНИ ЗДЕСЬ: своё имя -->
+    <p class="hero-name">ЛАРИСА</p>
+
+    <!-- ЗАМЕНИ ЗДЕСЬ: возраст. Если не хочешь — удали эту строку -->
+    <p class="hero-age">мне исполнилось 19!</p>
+
+    <!-- ЗАМЕНИ ЗДЕСЬ: дата и время -->
+    <div class="hero-date">1 ноября 2026 · 17:30</div>
+
+    <a href="#details" class="scroll-hint">↓ подробности</a>
+  </header>
+
+  <main class="container">
+
+    <!-- ============ ТАЙМЕР ============ -->
+    <section class="section reveal">
+      <h2 class="section-title">До праздника осталось</h2>
+      <div class="countdown">
+        <div class="time-box"><span id="days">00</span><small>дней</small></div>
+        <div class="time-box"><span id="hours">00</span><small>часов</small></div>
+        <div class="time-box"><span id="minutes">00</span><small>минут</small></div>
+        <div class="time-box"><span id="seconds">00</span><small>секунд</small></div>
+      </div>
+    </section>
+
+    <!-- ============ ДЕТАЛИ ============ -->
+    <section class="section reveal" id="details">
+      <h2 class="section-title">Детали</h2>
+
+      <div class="cards">
+
+        <!-- Когда -->
+        <div class="card">
+          <div class="card-icon">📅</div>
+          <h3>Когда</h3>
+          <!-- ЗАМЕНИ ЗДЕСЬ -->
+          <p>1 ноября 2026, воскресенье<br>сбор гостей в 17:30</p>
+        </div>
+
+        <!-- Где -->
+        <div class="card">
+          <div class="card-icon">📍</div>
+          <h3>Где</h3>
+          <!-- ЗАМЕНИ ЗДЕСЬ -->
+          <p>Тайм-кафе «СHECK IN»<br>ул. Кирова 13/31 </p>
+          <!-- ЗАМЕНИ ЗДЕСЬ: вставь адрес в ссылку после text= -->
+          <a class="link" target="_blank"
+            href="https://yandex.ru/maps/org/check_in/1740268391?si=fqa2jmkptbrq6jx9tnv5acfft4">
+     Открыть на карте →
+          </a>
+        </div>
+
+        <!-- Дресс-код -->
+        <div class="card">
+          <div class="card-icon">👗</div>
+          <h3>Дресс-код</h3>
+          <!-- ЗАМЕНИ ЗДЕСЬ -->
+          <p>Его нет! Одевайтесь так,<br>как вам будет комфортно!</p>
+        </div>
+
+        <!-- Подарки -->
+        <div class="card">
+          <div class="card-icon">🎁</div>
+          <h3>Про подарки</h3>
+          <!-- ЗАМЕНИ ЗДЕСЬ -->
+          <p>Лучший подарок — ваше присутствие</p>
+        </div>
+
+      
+
+    <!-- ============ ПОДТВЕРЖДЕНИЕ ============ -->
+    <section class="section reveal rsvp">
+      <h2 class="section-title">Ты придёшь?</h2>
+      <!-- ЗАМЕНИ ЗДЕСЬ: дату дедлайна -->
+      <p>Пожалуйста, подтверди до <strong> 28 октября</strong> — я буду ждать 🍰</p>
+
+      
+    </section>
+</div>
+</section>
+
+  </main>
+
+  <footer>С любовью, Лариса ♥</footer>
+
+
+  <script>
+    /* ==========================================
+       ТАЙМЕР ОБРАТНОГО ОТСЧЁТА
+       ЗАМЕНИ ЗДЕСЬ дату и время.
+       Формат: 'ГОД-МЕСЯЦ-ДЕНЬTЧАС:МИНУТА:00'
+       Месяц считается с нуля НЕТ — здесь обычный: 07 = июль.
+       ========================================== */
+    const eventDate = new Date('2026-11-01T17:30:00');
+
+    function updateCountdown(){
+      const diff = eventDate - new Date();
+      const d = Math.max(0, diff);
+
+      const days    = Math.floor(d / 86400000);
+      const hours   = Math.floor((d % 86400000) / 3600000);
+      const minutes = Math.floor((d % 3600000) / 60000);
+      const seconds = Math.floor((d % 60000) / 1000);
+
+      document.getElementById('days').textContent    = String(days).padStart(2,'0');
+      document.getElementById('hours').textContent   = String(hours).padStart(2,'0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    /* ==========================================
+       ПЛАВНОЕ ПОЯВЛЕНИЕ БЛОКОВ ПРИ ПРОКРУТКЕ
+       Трогать не нужно
+       ========================================== */
+    const observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(function(el){
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>
